@@ -1,0 +1,218 @@
+int modPin1 = 9;    // Channel 1
+int modPin2 = 10;    // Channel 2
+int modPin3 = 11;    // Channel 3
+int modPin4 = 6;    // Channel 4
+int statePin = 2;
+int butpin1 = 1;
+int butpin2 = 0;
+int ledPin1 = 13;
+int grow1 = 255;
+int grow2 = 255;
+int grow3 = 125;
+int grow4 = 25;
+int bloom1 = 255;
+int bloom2 = 125;
+int bloom3 = 255;
+int bloom4 = 255;
+int grow = 0;
+int bloom = 0;
+int rate1 = 255;
+int rate2 = 255;
+int rate3 = 255;
+int rate4 = 255;
+int buttonState = 0;        
+int lastButtonState = 0; 
+int buttontimeCounter = 0;
+int buttonprogCounter = 0;
+int analogOutPin = 0;
+int firststart = 1;
+const int analogInPin = A0;  // Analog input pin that the potentiometer is attached to
+const int analogInPin1 = A1;
+const int analogInPin2 = A2;
+const int analogInPin3 = A3;
+double timestart = 0;
+int sensorValue = 0;        // value read from the pot
+int outputValue = 0;        // value output to the PWM (analog out)
+int outputValue1 = 0; 
+int outputValue2 = 0; 
+int outputValue3 = 0; 
+int heure = 0;
+int growon = 0;
+int bloomon = 0;
+int fadevalue1 = 0;
+int fadevalue2 = 0;
+int fadevalue3 = 0;
+int fadevalue4 = 0;
+int bloomstate= 0;
+int growstate = 0;
+int timestate = 0;
+#include <Time.h>
+void setup()  {
+// setTime(hr,min,sec,day,month,yr);
+        pinMode(butpin1, INPUT);
+        pinMode(butpin2, INPUT);
+        pinMode(statePin, INPUT);
+       pinMode(modPin1, OUTPUT);
+       pinMode(modPin2, OUTPUT);
+       pinMode(modPin3, OUTPUT);
+       pinMode(modPin4, OUTPUT);
+       pinMode(ledPin1, OUTPUT);
+        timestart = millis();
+}
+
+void loop()  {
+ 
+   // read the analog in value:
+  sensorValue = analogRead(analogInPin);            
+  // map it to the range of the analog out:
+  outputValue = map(sensorValue, 0, 1023, 0, 255);  
+  sensorValue = analogRead(analogInPin1);            
+  // map it to the range of the analog out:
+  outputValue1 = map(sensorValue, 0, 1023, 0, 255); 
+    sensorValue = analogRead(analogInPin2);            
+  // map it to the range of the analog out:
+  outputValue2 = map(sensorValue, 0, 1023, 0, 255); 
+    sensorValue = analogRead(analogInPin3);            
+  // map it to the range of the analog out:
+  outputValue3 = map(sensorValue, 0, 1023, 0, 255); 
+heure = hour();
+ grow = digitalRead(butpin1);
+ bloom = digitalRead(butpin2);
+ timestate = digitalRead(statePin);
+ if (grow == HIGH) {
+rate1 = grow1;
+rate2 = grow2;
+rate3 = grow3;
+rate4 = grow4;
+   
+}
+if (bloom == HIGH) {
+rate1 = bloom1;
+rate2 = bloom2;
+rate3 = bloom3;
+rate4 = bloom4;
+   
+}
+
+ if (firststart == 0) {
+  
+ // fade in from min to max in increments of 5 points:
+  for(int fadeValue = 0 ; fadeValue <= 255; fadeValue +=1) {
+    // sets the value (range from 0 to 255):
+    fadevalue1 = map(fadeValue, 0, 255, 0, rate1);
+    fadevalue2 = map(fadeValue, 0, 255, 0, rate2);
+    fadevalue3 = map(fadeValue, 0, 255, 0, rate3);
+    fadevalue4 = map(fadeValue, 0, 255, 0, rate4);
+analogWrite(modPin1, fadevalue1);
+analogWrite(modPin2, fadevalue2);
+analogWrite(modPin3, fadevalue3);
+analogWrite(modPin4, fadevalue4);        
+    // wait for 30 milliseconds to see the dimming effect    
+    delay(100);                            
+  }
+  delay(2000);
+  for(int fadeValue = 255 ; fadeValue >= 0; fadeValue -=1) {
+    // sets the value (range from 0 to 255):
+    fadevalue1 = map(fadeValue, 0, 255, 0, rate1);
+    fadevalue2 = map(fadeValue, 0, 255, 0, rate2);
+    fadevalue3 = map(fadeValue, 0, 255, 0, rate3);
+    fadevalue4 = map(fadeValue, 0, 255, 0, rate4);
+analogWrite(modPin1, fadevalue1);
+analogWrite(modPin2, fadevalue2);
+analogWrite(modPin3, fadevalue3);
+analogWrite(modPin4, fadevalue4);        
+    // wait for 30 milliseconds to see the dimming effect    
+    delay(50);                            
+  }  
+ }
+firststart = 1;  
+  
+ 
+if (bloomon == 1 && bloomstate == 0) { // state changed from off to on
+ // fade in from min to max in increments of 5 points:
+  for(int fadeValue = 0 ; fadeValue <= 255; fadeValue +=1) {
+    // sets the value (range from 0 to 255):
+        fadevalue1 = map(fadeValue, 0, 255, 0, rate1);
+    fadevalue2 = map(fadeValue, 0, 255, 0, rate2);
+    fadevalue3 = map(fadeValue, 0, 255, 0, rate3);
+    fadevalue4 = map(fadeValue, 0, 255, 0, rate4);
+analogWrite(modPin1, fadevalue1);
+analogWrite(modPin2, fadevalue2);
+analogWrite(modPin3, fadevalue3);
+analogWrite(modPin4, fadevalue4);        
+    // wait for 30 milliseconds to see the dimming effect    
+    delay(30);                            
+  }
+
+}
+if (bloomon == 0 && bloomstate == 1) { // state changed from on to off
+ // fade in from min to max in increments of 5 points:
+  for(int fadeValue = 255 ; fadeValue >= 0; fadeValue -=1) {
+    // sets the value (range from 0 to 255):
+        fadevalue1 = map(fadeValue, 0, 255, 0, rate1);
+    fadevalue2 = map(fadeValue, 0, 255, 0, rate2);
+    fadevalue3 = map(fadeValue, 0, 255, 0, rate3);
+    fadevalue4 = map(fadeValue, 0, 255, 0, rate4);
+analogWrite(modPin1, fadevalue1);
+analogWrite(modPin2, fadevalue2);
+analogWrite(modPin3, fadevalue3);
+analogWrite(modPin4, fadevalue4);        
+    // wait for 30 milliseconds to see the dimming effect    
+    delay(30);                            
+  }
+
+}
+if (growon == 1 && growstate == 0) { // state changed from off to on
+ // fade in from min to max in increments of 5 points:
+  for(int fadeValue = 0 ; fadeValue <= 255; fadeValue +=1) {
+    // sets the value (range from 0 to 255):
+        fadevalue1 = map(fadeValue, 0, 255, 0, rate1);
+    fadevalue2 = map(fadeValue, 0, 255, 0, rate2);
+    fadevalue3 = map(fadeValue, 0, 255, 0, rate3);
+    fadevalue4 = map(fadeValue, 0, 255, 0, rate4);
+analogWrite(modPin1, fadevalue1);
+analogWrite(modPin2, fadevalue2);
+analogWrite(modPin3, fadevalue3);
+analogWrite(modPin4, fadevalue4);        
+    // wait for 30 milliseconds to see the dimming effect    
+    delay(30);                            
+  }
+
+} 
+if (growon == 0 && growstate == 1) { // state changed from off to on
+ // fade in from min to max in increments of 5 points:
+  for(int fadeValue = 255 ; fadeValue >= 0; fadeValue -=1) {
+    // sets the value (range from 0 to 255):
+        fadevalue1 = map(fadeValue, 0, 255, 0, rate1);
+    fadevalue2 = map(fadeValue, 0, 255, 0, rate2);
+    fadevalue3 = map(fadeValue, 0, 255, 0, rate3);
+    fadevalue4 = map(fadeValue, 0, 255, 0, rate4);
+analogWrite(modPin1, fadevalue1);
+analogWrite(modPin2, fadevalue2);
+analogWrite(modPin3, fadevalue3);
+analogWrite(modPin4, fadevalue4);        
+    // wait for 30 milliseconds to see the dimming effect    
+    delay(30);                            
+  }
+ 
+} 
+delay(20);  
+bloomstate = bloomon;
+growstate = growon;
+if (timestate == HIGH && bloom == HIGH) {
+ bloomon = 1; 
+ digitalWrite(ledPin1, HIGH); 
+}
+else
+{
+ bloomon = 0; 
+} 
+if (timestate == HIGH && grow == HIGH) {
+ growon = 1;   
+}
+else
+{
+growon = 0;
+}
+
+}
